@@ -1,0 +1,20 @@
+{
+  "name": "idea-machine",
+  "version": "1.0.0",
+  "description": "just for study node",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Cooking oil brother hood",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "debug": "^4.1.1",
+    "express": "^4.17.1",
+    "mongoose": "^5.8.11",
+    "morgan": "^1.9.1",
+    "multer": "^1.4.2",
+    "serve-index": "^1.9.1"
+  }
+}
