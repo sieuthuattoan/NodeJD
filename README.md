@@ -1,2 +1,2 @@
 # Node
-ModuleN - Node Starter
+IdeaMachine - Node Starter
