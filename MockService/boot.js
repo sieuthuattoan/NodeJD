@@ -13,13 +13,13 @@ app.use('/api',apiRoutes)
 
 // Connect to Mongoose and set connection variable
 mongoose.connect('mongodb://localhost/27017', { useNewUrlParser: true});
-var db = mongoose.connection;
+//var db = mongoose.connection;
 
 // Added check for DB connection
-if(!db)
-    console.log("Error connecting db")
-else
-    console.log("Db connected successfully")
+// if(!db)
+//     console.log("Error connecting db")
+// else
+//     console.log("Db connected successfully")
 
 var port = process.env.PORT || 3000;
 
