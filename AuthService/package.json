@@ -5,7 +5,7 @@
   "main": "boot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	"start" : "env-cmd -f ./.env nodemon boot.js"
+	  "start" : "env-cmd -f ./.env nodemon boot.js"
   },
   "author": "cooking oil brother hood",
   "license": "ISC",

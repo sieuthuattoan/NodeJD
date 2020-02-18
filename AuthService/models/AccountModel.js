@@ -28,3 +28,8 @@ const accountSchema = mongoose.Schema({
     }]
 });
 
+
+accountSchema.pre('save', async function(next){
+    //Hash the password before saving the user model
+    
+});

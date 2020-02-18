@@ -13,13 +13,17 @@ router.get('/',function(req,res){
 //user routes
 router.route('/users')
     .get(userController.index)
-    .post(userController.create);
+    .post(userController.create)
 
 router.route('/users/:user_id')
     .get(userController.read)
     .put(userController.update)
     .patch(userController.update)
     .delete(userController.delete);
+
+//test routes
+router.route('/test')
+    .get(userController.test)
 
 //Export API routes
 module.exports = router;

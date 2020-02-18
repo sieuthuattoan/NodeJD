@@ -1,5 +1,31 @@
 //import user model
 var User = require('../models/userModel');
+const debug = require('debug')('controller-debugger');
+
+
+//---Test section---
+var test = (req,res)=>{
+    var promise = new Promise(function(resolve, reject) {
+    setTimeout(function() {
+        resolve({
+            message: "promise done",
+            code: "pdone"
+        });
+        //console.log(promise);
+    }, 5 * 1000);
+    });
+    promise.then(result=>{
+      console.log(result)  ;
+    })
+    res.json({
+        status:"ok for now"
+    });
+}
+//---End test section---
+
+
+
+
 //index action
 var index = (req,res) => {
     User.get((err, user) => {
@@ -102,3 +128,4 @@ exports.create = createUser;
 exports.update = updateUser;
 exports.delete = deleteUser;
 exports.read = readUser;
+exports.test = test;
