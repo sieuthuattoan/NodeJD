@@ -1,26 +1,78 @@
 //import user model
 var User = require('../models/userModel');
 const debug = require('debug')('controller-debugger');
+const fetch = require('node-fetch');
 
 
 //---Test section---
 var test = (req,res)=>{
-    var promise = new Promise(function(resolve, reject) {
-    setTimeout(function() {
-        resolve({
-            message: "promise done",
-            code: "pdone"
-        });
-        //console.log(promise);
-    }, 5 * 1000);
-    });
-    promise.then(result=>{
-      console.log(result)  ;
-    })
-    res.json({
-        status:"ok for now"
-    });
+    console.clear();
+    test2(res);
+    //fetchUserDetailsWithStats(res);
 }
+
+    //--test promise
+    var test1 = (res)=>{
+        var promise = new Promise((resolve, reject) => {
+            var t = 5;
+            console.log("inside promise.");
+            setTimeout(function() {
+                var k = 8;
+                setTimeout(function() {
+                    resolve({
+                        status:"done",
+                        message: t+"*1000 + "+k+"*1000" ,
+                    });
+                }, k * 1000);
+            }, t * 1000);
+        });
+        promise.then(result=>{
+            res.json({
+                result
+            });
+        })
+
+        console.log("the end line of code.");
+    }
+
+    var test2 = (res)=>{
+        console.log("start test2 at "+new Date());
+        var promise = new Promise((resolve,resject)=>{
+            fetch("https://api.github.com/users/nkgokul")
+                .then(res => res.json())
+                .then(data=> {
+                    console.log("the fetch get the data at "+new Date());
+                    resolve(data)
+                })
+        }).then(result=>{
+            console.log("the promise got data from fetch at "+new Date());
+            res.json({
+                result
+            });
+        }).catch(err=>{
+            res.json(
+                err
+            )
+        })
+        console.log("stop test2 at "+new Date());
+    }
+
+    //--test async await
+    async function fetchUserDetailsWithStats(res) {
+        i = 0;
+        for (name of ["nkgokul", "BrendanEich", "gaearon"]) {
+            i++;
+            console.log("Starting API call " + i + " at " + new Date());
+            userDetails = await fetch("https://api.github.com/users/" + name);
+            userDetailsJSON = await userDetails.json();
+            console.log("Finished API call " + i + " at " + new Date());
+            console.log("userDetailsJSON: at "+new Date()+" : ", userDetailsJSON);
+        }
+        res.json({
+            message:"ok"
+        });
+    }
+
 //---End test section---
 
 
