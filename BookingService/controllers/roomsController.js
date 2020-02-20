@@ -56,10 +56,49 @@ let update = (req, res) => {
     room.findOneAndUpdate(
         { _id: id },
         room,
-        { new: true}, 
+        { 
+            sort: { _id: -1 },
+            upsert: true
+        }, 
         (err, result) => {
-            
+            if(err) {
+                if(err.name == 'ValidationError') {
+                    res.json({
+                        status: 'error',
+                        message: 'Please input fields required',
+
+                    })
+                } else {
+                    res.json({
+                        status: 'error',
+                        message: err
+                    })
+                }
+            } else {
+                res.json({
+                    status: "success",
+                    message: "Update successfully",
+                    data: result
+                });
+            }
         }
 
     );
+}
+let deleteRoom = (req, res) => {
+    var room = Room();
+    var code = req.params.code;
+    room.findOneAndDelete(code, (err, result) => {
+        if(err) {
+            res.json({
+                status: 'error',
+                message: 'Failed to Delete Room: ' + err
+            });
+        } else {
+            res.json({
+                status: 'success',
+                message: 'Room Deleted'
+            })
+        }
+    });
 }
