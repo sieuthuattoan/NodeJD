@@ -1,4 +1,4 @@
-//require('./config/dbConfig');
+require('./config/dbConfig');
 
 let express = require('express');
 let app = express();

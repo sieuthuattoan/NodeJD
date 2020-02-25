@@ -7,8 +7,9 @@ const fetch = require('node-fetch');
 //---Test section---
 var test = (req,res)=>{
     console.clear();
-    test2(res);
-    //fetchUserDetailsWithStats(res);
+    //test2(res);
+    //fetchUserDetailsWithStatsPromise(res);
+    testAsAw(res);
 }
 
     //--test promise
@@ -58,20 +59,43 @@ var test = (req,res)=>{
     }
 
     //--test async await
-    async function fetchUserDetailsWithStats(res) {
+    var fetchUserDetailsWithStats = async (res) => {
         i = 0;
+        var listUsrInfor = [];
         for (name of ["nkgokul", "BrendanEich", "gaearon"]) {
             i++;
             console.log("Starting API call " + i + " at " + new Date());
-            userDetails = await fetch("https://api.github.com/users/" + name);
-            userDetailsJSON = await userDetails.json();
+            userDetails = await fetch("https://api.github.com/users/" + name).then(result=>result.json()).then(data=>data);
             console.log("Finished API call " + i + " at " + new Date());
-            console.log("userDetailsJSON: at "+new Date()+" : ", userDetailsJSON);
+            console.log("userDetails: at "+new Date()+" : ", userDetails);
+            await listUsrInfor.push(userDetails);
         }
-        res.json({
-            message:"ok"
+        await res.json({
+            listUsrInfor
         });
     }
+
+    var testAsAw = async (res) => {
+        console.log("Starting at " + new Date());
+        userDetails = await asCall().then(result => result);
+        console.log("Finished at " + new Date());
+        console.log("userDetails: at "+new Date()+" : ", userDetails);
+
+        res.json({
+            userDetails
+        });
+    }
+    var asCall = (res)=>{
+        return new Promise((resolve, reject)=>{
+            setTimeout(()=>{
+                resolve({
+                    status:"done",
+                    message: "Ngon" ,
+                }); 
+            }, 5*1000);
+        })
+    }
+
 
 //---End test section---
 
