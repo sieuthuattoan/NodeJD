@@ -80,7 +80,7 @@ var test = (req,res)=>{
         userDetails = await asCall().then(result => result);
         console.log("Finished at " + new Date());
         console.log("userDetails: at "+new Date()+" : ", userDetails);
-
+        
         res.json({
             userDetails
         });
@@ -199,9 +199,13 @@ var deleteUser = (req, res)=>{
     });
 }
 
-exports.index = index;
-exports.create = createUser;
-exports.update = updateUser;
-exports.delete = deleteUser;
-exports.read = readUser;
-exports.test = test;
+var Exporter = {
+    index:index,
+    create:createUser,
+    update:updateUser,
+    delete:deleteUser,
+    read:readUser,
+    test:test,
+}
+
+module.exports = Exporter;
