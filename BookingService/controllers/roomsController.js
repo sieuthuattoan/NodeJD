@@ -1,6 +1,5 @@
-const mongoose = require(mongoose);
 
-var Room = mongoose.model('Room');
+var Room = require('../models/roomModel');
 
 let index = (req, res) => {
     Room.find((err, results) => {
