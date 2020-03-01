@@ -23,6 +23,7 @@ let create = (req, res) => {
     // room.room_type.name = req.body.type_name;
     room.room_type.adult = req.body.type_adult;
     room.room_type.children = req.body.type_children;
+    room.room_type.extra_bed = req.body.extra_bed;
     room.total = req.body.total;
     room.is_book = req.body.is_book;
 
