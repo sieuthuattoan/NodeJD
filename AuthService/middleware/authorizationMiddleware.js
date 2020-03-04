@@ -11,7 +11,7 @@ var authorize = async(req,res,next)=>{
             res.json({
                 status: responseObj.STATUS.ERROR,
                 message: responseObj.MESSAGE.ACCESS_FAILED
-            });
+            })
         }else{
             req.LoggingInAccount = account;
             req.LoggingInToken = token;

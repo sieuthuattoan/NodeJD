@@ -1,4 +1,4 @@
-const AccountModel = require('../models/accountModel');
+const accountModel = require('../models/accountModel');
 const responseObj = require('../config/responseMsgConfig');
 
 //index
@@ -12,7 +12,7 @@ var index = (req, res) => {
 //register an account
 var register = async (req, res) => {
     try{
-        var account =  new AccountModel(req.body);
+        var account =  new accountModel(req.body);
         var token =  await account.generateToken();
         account.tokens.push(token);
         await account.save();
@@ -38,7 +38,7 @@ var logIn = async(req,res) => {
             email : req.body.email,
             password : req.body.password
         }
-        const accountLogin = await AccountModel.findByCredentials(accountInfor);
+        const accountLogin = await accountModel.findByCredentials(accountInfor);
         if (!accountLogin) {
             return res.json({
                 status: responseObj.STATUS.ERROR,
