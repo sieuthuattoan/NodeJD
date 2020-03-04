@@ -12,4 +12,7 @@ router.route("/")
 router.route("/register")
     .post(accountController.register);
 
+router.route("/login")
+    .post(accountController.login);
+
 module.exports = router;

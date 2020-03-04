@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const responseObj = require('../config/responseMsgConfig');
 
 const accountSchema = mongoose.Schema({
     email:{
@@ -11,7 +12,7 @@ const accountSchema = mongoose.Schema({
         lowercase: true,
         validate: value=>{
             if(!validator.isEmail(value)){
-                throw new Error({err:'Invalid email address'});
+                throw new Error({err: responseObj.MESSAGE.INVALID_EMAIL});
             };
         }
     },
@@ -42,24 +43,26 @@ accountSchema.pre('save', async function(next){
 accountSchema.methods.generateToken = async function(){
     var account = this;
     var token = jwt.sign({_id:account._id}, process.env.JWT_KEY);
-    account.tokens = account.tokens.concat({token})
+    account.tokens.push({token});
     await account.save()
     return token
 }
 
 // Search for a user by email and password.
-accountSchema.statics.findByCredentials = async function(email, password) {
-    var account = await Acc.findOne({ email} )
+accountSchema.statics.findByCredentials = async function(accountInfor) {
+    var account = await Account.findOne({email: accountInfor.email})
     if (!account) {
-        throw new Error({ error: 'Invalid login credentials' })
+        throw new Error({ error: responseObj.MESSAGE.LOGIN_FAILED })
     }
-    var isPasswordMatch = await bcrypt.compare(password, account.password)
+    var isPasswordMatch = await bcrypt.compare(accountInfor.password, account.password)
     if (!isPasswordMatch) {
-        throw new Error({ error: 'Invalid login credentials' })
+        throw new Error({ error: responseObj.MESSAGE.LOGIN_FAILED })
     }
     return account
 }
 
-var Exporter = mongoose.model('Account',accountSchema);
+var Account = mongoose.model('Account',accountSchema);
+
+var Exporter = Account;
 
 module.exports = Exporter;
