@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const mongoose = require('mongoose');
 
-mongoose.connect(process.env.MONGODB_CONNECTION_STRING + 'hotel',{
+mongoose.connect(process.env.MONGODB_CONNECTION_STRING,{
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true
@@ -11,6 +11,6 @@ mongoose.connect(process.env.MONGODB_CONNECTION_STRING + 'hotel',{
     if(err) {
         console.log(err);
     } else {
-        console.log('Book service has use "hotel" db!');
+        console.log('DB Connected!');
     }
 });
