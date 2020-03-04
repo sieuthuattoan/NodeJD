@@ -1,4 +1,5 @@
 var router =  require("express").Router();
+var authorizationMiddleware = require('./middleware/authorizationMiddleware');
 
 var accountController = require("./controller/accountController");
 
@@ -13,6 +14,12 @@ router.route("/register")
     .post(accountController.register);
 
 router.route("/login")
-    .post(accountController.login);
+    .post(accountController.logIn);
+
+router.route("/logout")
+    .post(authorizationMiddleware.authorize, accountController.logOut);
+
+router.route("/logoutall")
+    .post(authorizationMiddleware.authorize, accountController.logOutAll);
 
 module.exports = router;

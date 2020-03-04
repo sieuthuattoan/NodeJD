@@ -21,12 +21,10 @@ const accountSchema = mongoose.Schema({
         required: true,
         minLength: 7
     },
-    tokens:[{
-        token:{
-            type: String,
-            required: true
-        }
-    }]
+    tokens:{ //store a list of token
+        type: [String],
+        required: true
+    }
 });
 
 //Hash the password before saving the user model
@@ -43,8 +41,6 @@ accountSchema.pre('save', async function(next){
 accountSchema.methods.generateToken = async function(){
     var account = this;
     var token = jwt.sign({_id:account._id}, process.env.JWT_KEY);
-    account.tokens.push({token});
-    await account.save()
     return token
 }
 
