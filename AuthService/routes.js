@@ -12,24 +12,29 @@ router.use("/",(req,res,next)=>{
 router.route("/")
     .get(accountController.index);
 
+router.route("/activateAccount")
+    .get(accountController.activate);
+
 router.route("/register")
     .post(accountController.register);
 
 router.route("/login")
-    .post(accountController.logIn);
+    .get(accountController.logIn);
 
 router.route("/logout")
-    .post(authorizationMiddleware.authorize, accountController.logOut);
+    .put(authorizationMiddleware.authorize, accountController.logOut)
+    .patch(authorizationMiddleware.authorize, accountController.logOut);
 
 router.route("/logoutall")
-    .post(authorizationMiddleware.authorize, accountController.logOutAll);
+    .put(authorizationMiddleware.authorize, accountController.logOutAll)
+    .patch(authorizationMiddleware.authorize, accountController.logOutAll);
 
 
 //user profile route
-router.route('/user/updateCurrent')
-    .post(authorizationMiddleware.authorize, userProfileController.updateUser);
-
-router.route('/user/readCurrent')
-    .post(authorizationMiddleware.authorize, userProfileController.readUser);
-
+router.route('/user')
+    .post(authorizationMiddleware.authorize, userProfileController.createCurrentUser)
+    .put(authorizationMiddleware.authorize, userProfileController.updateCurrentUser)
+    .patch(authorizationMiddleware.authorize, userProfileController.updateCurrentUser)
+    .get(authorizationMiddleware.authorize, userProfileController.readCurrentUser);
+    
 module.exports = router;

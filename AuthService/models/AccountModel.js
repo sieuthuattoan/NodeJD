@@ -21,6 +21,16 @@ const accountSchema = mongoose.Schema({
         required: true,
         minLength: 7
     },
+    createdDate:{
+        type: Date
+    },
+    updatedDate:{
+        type: Date
+    },
+    isActivated:{
+        type: Boolean,
+        default: false
+    },
     tokens:{ //store a list of token
         type: [String],
         required: true

@@ -22,6 +22,12 @@ var userSchema = mongoose.Schema({
     birthDate:{
         type: Date
     },
+    createdDate:{
+        type: Date
+    },
+    updatedDate:{
+        type: Date
+    },
 });
 
 var Exporter = mongoose.model('User',userSchema);
