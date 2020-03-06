@@ -1,17 +1,17 @@
 require('./config/dbConfig');
-var bodyParser = require('body-parser');
+var BodyParser = require('body-parser');
 
-const express = require('express');
-const app = express();
-const router = require("./routes");
+const Express = require('express');
+const App = Express();
+const Router = require("./routes");
 
 var port = process.env.PORT || 8080;
-app.use(express.json());
+App.use(Express.json());
 //app.use(bodyParser.urlencoded({extended:true}));
 //app.use(bodyParser.json());
 
-app.use("/api",router);
+App.use("/api",Router);
 
-app.listen(port, () => {
+App.listen(port, () => {
     console.log('Auth service is running...');
-}) 
+})

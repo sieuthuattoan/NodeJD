@@ -1,13 +1,10 @@
-const accountModel = require('../models/accountModel');
-const verificationModel = require('../models/verificationModel');
-
-const responseObj = require('../config/responseMsgConfig');
-var randomatic = require('randomatic');
+const ResponseObj = require('../config/responseMsgConfig');
+const AccountBusiness = require('../business/accountBusiness');
 
 //index
 var index = (req, res) => {
     res.json({
-        status: responseObj.STATUS.SUCCESS,
+        status: ResponseObj.STATUS.SUCCESS,
         message: "you are at the index"
     });
 }
@@ -15,66 +12,38 @@ var index = (req, res) => {
 //register an account
 var register = async (req, res) => {
     try{
-        var account =  new accountModel(req.body);
-        var token =  await account.generateToken();
-        account.tokens.push(token);
-        account.createdDate = new Date();
-        await account.save();
-        var verificationObj = await setVerifiedCode(account.email);
-        res.json({
-            status: responseObj.STATUS.SUCCESS,
-            account: account,
-            verificationInfor:{
-                status: verificationObj.status,
-                message: verificationObj.message,
-                code: verificationObj.code
-            } 
-        });
+        var newAccountObj = req.body;
+        var result = await AccountBusiness.registerBusiness(newAccountObj);
+        res.json(result);
     }
     catch(err){
         res.json({
-            status: responseObj.STATUS.ERROR,
+            status: ResponseObj.STATUS.ERROR,
             message:err.message
         });
     }
 }
 
-//recovery account
-var recover = async(req,res) => {
-
-}
-
 //activata account
 var activate = async(req,res) => {
-    var time = new Date();
-    time.setMinutes( time.getMinutes() - process.env.VERIFICATION_DURATION);
-    var codeObj = {
-        email: req.body.email,
-        code: req.body.code,
-        time: time
-    }
-    var result = await verificationModel.checkCode(codeObj);
+    try{
+        var time = new Date();
+        time.setMinutes( time.getMinutes() - process.env.VERIFICATION_DURATION);
+        var codeObj = {
+            email: req.body.email,
+            code: req.body.code,
+            time: time,
+            process: ResponseObj.PROCESS.ACTIVATE
+        }
 
-    switch(result.status){
-        case responseObj.STATUS.SUCCESS:
-                try{ 
-                    await accountModel.where({email:codeObj.email}).updateOne({isActivated:true});
-                }catch(err){
-                    result = {
-                        status: responseObj.STATUS.ERROR,
-                        message: err.message
-                    }
-                }
-            break;
-        case responseObj.STATUS.WARNING: 
-                if(result.message===responseObj.MESSAGE.VERIFICATION_CODE_EXPIRED)
-                    var generatingNew = await setVerifiedCode(codeObj.email);
-                    result.code = generatingNew.code;
-            break;
-        default: 
-        break;
+        var result = await AccountBusiness.activateBusiness(codeObj);
+        res.json(result);
+    }catch(err){
+        res.json({
+            status: ResponseObj.STATUS.ERROR,
+            message:err.message
+        });
     }
-    res.json(result);
 }
 
 //login
@@ -84,25 +53,13 @@ var logIn = async(req,res) => {
             email : req.body.email,
             password : req.body.password
         }
-        const accountLogin = await accountModel.findByCredentials(accountInfor);
-        if (!accountLogin) {
-            return res.json({
-                status: responseObj.STATUS.ERROR,
-                message: responseObj.MESSAGE.LOGIN_FAILED
-            })
-        }
-        var token = await accountLogin.generateToken()
-        accountLogin.tokens.push(token);
-        await accountLogin.save();
-        res.json({ 
-            status: responseObj.STATUS.SUCCESS,
-            message: responseObj.MESSAGE.LOGIN_SUCCESS,
-            accountLogin: accountLogin, 
-            token: token 
-        })
+
+        var result = AccountBusiness.logInBusiness(accountInfor);
+        res.json(result);
+
     }catch(err){
         res.json({
-            status: responseObj.STATUS.ERROR,
+            status: ResponseObj.STATUS.ERROR,
             message:err.message
         });
     }
@@ -112,17 +69,15 @@ var logIn = async(req,res) => {
 ////LoggingInAccount and LoggingInToken have been set at the authorization middleware
 var logOut = async(req,res)=>{
     try{
-        req.LoggingInAccount.tokens = req.LoggingInAccount.tokens.filter((value)=>{
-            return value != req.LoggingInToken; //this returns a list of token which not match with req.LoggingInToken
-        });
-        await req.LoggingInAccount.save();
-        res.json({
-            status: responseObj.STATUS.SUCCESS,
-            message: responseObj.MESSAGE.LOGOUT_SUCCESS,
-        });
+        var accountInfor = {
+            LoggingInAccount: req.LoggingInAccount,
+            LoggingInToken: req.LoggingInToken
+        }
+        var result = AccountBusiness.logOutBusiness(accountInfor);
+        res.json(result);
     }catch(err){
         res.json({
-            status: responseObj.STATUS.ERROR,
+            status: ResponseObj.STATUS.ERROR,
             message:err.message
         });
     }
@@ -132,45 +87,53 @@ var logOut = async(req,res)=>{
 ////LoggingInAccount and LoggingInToken have been set at the authorization middleware
 var logOutAll = async(req,res)=>{
     try{
-        req.LoggingInAccount.tokens.splice(0,req.LoggingInAccount.tokens.length);
-        await req.LoggingInAccount.save();
-        res.json({
-            status: responseObj.STATUS.SUCCESS,
-            message: responseObj.MESSAGE.LOGOUTALL_SUCCESS,
-        });
+        var accountInfor = {
+            LoggingInAccount: req.LoggingInAccount
+        }
+        var result = AccountBusiness.logOutAllBusiness(accountInfor);
+        res.json(result);
+
     }catch(err){
         res.json({
-            status: responseObj.STATUS.ERROR,
+            status: ResponseObj.STATUS.ERROR,
             message:err.message
         });
     }
 }
 
-//helper
-var setVerifiedCode = async(email) => {  
-    var checkAccountExists = accountModel.exists({email: email});
-    if(!checkAccountExists){
-        return {
-            status: responseObj.STATUS.WARNING,
-            message: responseObj.MESSAGE.EMAIL_NOT_FOUND,
-            code: null
-        };
-    }else{
-        var verifiedCode = randomatic('0',6);
-        var verification = new verificationModel({
-            email: email,
-            code: verifiedCode,
-            createdTime: new Date()
+//recovery account
+var recoverySetVerifiedCode = async(req,res) => {
+    try{
+        var recoveryObj = {
+            email: req.body.email,
+        }
+        var result = AccountBusiness.recoverySetVerifiedCodeBusiness(recoveryObj);
+            res.json(result);
+
+    }catch(err){
+        res.json({
+            status: ResponseObj.STATUS.ERROR,
+            message:err.message
         });
-        await verification.save();
-        return {
-            status: responseObj.STATUS.SUCCESS,
-            message: responseObj.MESSAGE.OK,
-            code: verifiedCode
-        };
     }
 }
 
+var recoveryGenerateNewPassword = async(req,res) => {
+    try{
+        var recoveryObj = {
+            email: req.body.email,
+            verifiedCode: req.body.code
+        }
+        var result = AccountBusiness.recoveryGenerateNewPasswordBusiness(recoveryObj);
+            res.json(result);
+
+    }catch(err){
+        res.json({
+            status: ResponseObj.STATUS.ERROR,
+            message:err.message
+        });
+    }
+}
 
 var Exporter = {
     index:index,
@@ -178,7 +141,9 @@ var Exporter = {
     logIn: logIn,
     logOut: logOut,
     logOutAll: logOutAll,
-    activate: activate
+    activate: activate,
+    recoveryGenerateNewPassword: recoveryGenerateNewPassword,
+    recoverySetVerifiedCode: recoverySetVerifiedCode
 }
 
 module.exports = Exporter;

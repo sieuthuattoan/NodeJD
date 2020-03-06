@@ -1,8 +1,8 @@
-var mongoose = require('mongoose');
-var validator = require('validator');
-const responseObj = require('../config/responseMsgConfig');
+var Mongoose = require('mongoose');
+//var Validator = require('validator');
+//const ResponseObj = require('../config/responseMsgConfig');
 
-var userSchema = mongoose.Schema({
+var userSchema = Mongoose.Schema({
     accountId:{
         type: String,
         require: true,
@@ -30,6 +30,6 @@ var userSchema = mongoose.Schema({
     },
 });
 
-var Exporter = mongoose.model('User',userSchema);
+var Exporter = Mongoose.model('UserProfile',userSchema);
 
 module.exports = Exporter;

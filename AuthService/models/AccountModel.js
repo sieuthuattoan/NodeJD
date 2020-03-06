@@ -1,18 +1,18 @@
-const mongoose = require('mongoose');
-const validator = require('validator');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const responseObj = require('../config/responseMsgConfig');
+const Mongoose = require('mongoose');
+const Validator = require('validator');
+const Bcrypt = require('bcryptjs');
+const Jwt = require('jsonwebtoken');
+const ResponseObj = require('../config/responseMsgConfig');
 
-const accountSchema = mongoose.Schema({
+const accountSchema = Mongoose.Schema({
     email:{
         type: String,
         required: true,
         unique: true,
         lowercase: true,
         validate: value=>{
-            if(!validator.isEmail(value)){
-                throw new Error({err: responseObj.MESSAGE.INVALID_EMAIL});
+            if(!Validator.isEmail(value)){
+                throw new Error({err: ResponseObj.MESSAGE.INVALID_EMAIL});
             };
         }
     },
@@ -42,7 +42,7 @@ const accountSchema = mongoose.Schema({
 accountSchema.pre('save', async function(next){
     const account = this;
     if(account.isModified('password')){
-        account.password = await bcrypt.hash(account.password,8);
+        account.password = await Bcrypt.hash(account.password,8);
     }
     next();
 });
@@ -50,7 +50,7 @@ accountSchema.pre('save', async function(next){
 // Generate an auth token for the user
 accountSchema.methods.generateToken = async function(){
     var account = this;
-    var token = jwt.sign({_id:account._id}, process.env.JWT_KEY);
+    var token = Jwt.sign({_id:account._id}, process.env.JWT_KEY);
     return token
 }
 
@@ -58,17 +58,17 @@ accountSchema.methods.generateToken = async function(){
 accountSchema.statics.findByCredentials = async function(accountInfor) {
     var account = await Account.findOne({email: accountInfor.email})
     if (!account) {
-        throw new Error({ error: responseObj.MESSAGE.LOGIN_FAILED })
+        throw new Error({ error: ResponseObj.MESSAGE.LOGIN_FAILED })
     }
-    var isPasswordMatch = await bcrypt.compare(accountInfor.password, account.password)
+    var isPasswordMatch = await Bcrypt.compare(accountInfor.password, account.password)
     if (!isPasswordMatch) {
-        throw new Error({ error: responseObj.MESSAGE.LOGIN_FAILED })
+        throw new Error({ error: ResponseObj.MESSAGE.LOGIN_FAILED })
     }
     return account
 }
 
-var Account = mongoose.model('Account',accountSchema);
+var AccountModel = Mongoose.model('Account',accountSchema);
 
-var Exporter = Account;
+var Exporter = AccountModel;
 
 module.exports = Exporter;

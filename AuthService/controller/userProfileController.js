@@ -1,21 +1,21 @@
-const userModel = require('../models/userProfileModel');
-const responseObj = require('../config/responseMsgConfig');
+const UserModel = require('../models/userProfileModel');
+const ResponseObj = require('../config/responseMsgConfig');
 
 
 var createCurrentUser= async(req,res)=>{
     try{
         var accountId = req.LoggingInAccount.id;
-        user = new userModel(req.body.user);
+        user = new UserModel(req.body.user);
         user.accountId = accountId;
         user.createdDate = new Date();
         await user.save();
         res.json({
-            status: responseObj.STATUS.SUCCESS,
-            message:responseObj.MESSAGE.USER_PROFILE_CREATED
+            status: ResponseObj.STATUS.SUCCESS,
+            message:ResponseObj.MESSAGE.USER_PROFILE_CREATED
         });
     }catch(err){
         res.json({
-            status: responseObj.STATUS.ERROR,
+            status: ResponseObj.STATUS.ERROR,
             message:err.message
         });
     }
@@ -24,11 +24,11 @@ var createCurrentUser= async(req,res)=>{
 var updateCurrentUser= async(req,res)=>{
     try{
         var accountId = req.LoggingInAccount.id;
-        var user = await userModel.findOne({accountId: accountId});
+        var user = await UserModel.findOne({accountId: accountId});
         if(!user){
             res.json({
-                status: responseObj.STATUS.WARNING,
-                message:responseObj.MESSAGE.USER_PROFILE_NOT_FOUND
+                status: ResponseObj.STATUS.WARNING,
+                message:ResponseObj.MESSAGE.USER_PROFILE_NOT_FOUND
             });
         }else{
             user.firstName = req.user.firstName ? req.user.firstName : user.firstName;
@@ -38,13 +38,13 @@ var updateCurrentUser= async(req,res)=>{
             user.updatedDate = new Date();
             await user.save();
             res.json({
-                status: responseObj.STATUS.SUCCESS,
-                message:responseObj.MESSAGE.USER_PROFILE_UPDATED
+                status: ResponseObj.STATUS.SUCCESS,
+                message:ResponseObj.MESSAGE.USER_PROFILE_UPDATED
             });
         }
     }catch(err){
         res.json({
-            status: responseObj.STATUS.ERROR,
+            status: ResponseObj.STATUS.ERROR,
             message:err.message
         });
     }
@@ -53,22 +53,22 @@ var updateCurrentUser= async(req,res)=>{
 var readCurrentUser= async(req,res)=>{
     try{
         var accountId = req.LoggingInAccount.id;
-        var user = await userModel.findOne({accountId: accountId});
+        var user = await UserModel.findOne({accountId: accountId});
         if(!user){
             res.json({
-                status: responseObj.STATUS.WARNING,
-                message:responseObj.MESSAGE.USER_PROFILE_NOT_FOUND
+                status: ResponseObj.STATUS.WARNING,
+                message:ResponseObj.MESSAGE.USER_PROFILE_NOT_FOUND
             });
         }else{
             res.json({
-                status: responseObj.STATUS.SUCCESS,
-                message:responseObj.MESSAGE.OK,
+                status: ResponseObj.STATUS.SUCCESS,
+                message:ResponseObj.MESSAGE.OK,
                 userProfile: user
             });
         }
     }catch(err){
         res.json({
-            status: responseObj.STATUS.ERROR,
+            status: ResponseObj.STATUS.ERROR,
             message:err.message
         });
     }

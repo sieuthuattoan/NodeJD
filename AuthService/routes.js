@@ -1,40 +1,45 @@
-var router =  require("express").Router();
-var authorizationMiddleware = require('./middleware/authorizationMiddleware');
+var Router =  require("express").Router();
+var AuthorizationMiddleware = require('./middleware/authorizationMiddleware');
 
-var accountController = require("./controller/accountController");
-var userProfileController = require("./controller/userProfileController");
+var AccountController = require("./controller/accountController");
+var UserProfileController = require("./controller/userProfileController");
 
-router.use("/",(req,res,next)=>{
+var email = require('./helpers/emailHelper');
+
+Router.use("/",(req,res,next)=>{
     next();
 });
 
+Router.route("/test")
+    .get(email.sendMail);
+
 //auth route
-router.route("/")
-    .get(accountController.index);
+Router.route("/")
+    .get(AccountController.index);
 
-router.route("/activateAccount")
-    .get(accountController.activate);
+Router.route("/activateAccount")
+    .get(AccountController.activate);
 
-router.route("/register")
-    .post(accountController.register);
+Router.route("/register")
+    .post(AccountController.register);
 
-router.route("/login")
-    .get(accountController.logIn);
+Router.route("/login")
+    .get(AccountController.logIn);
 
-router.route("/logout")
-    .put(authorizationMiddleware.authorize, accountController.logOut)
-    .patch(authorizationMiddleware.authorize, accountController.logOut);
+Router.route("/logout")
+    .put(AuthorizationMiddleware.authorize, AccountController.logOut)
+    .patch(AuthorizationMiddleware.authorize, AccountController.logOut);
 
-router.route("/logoutall")
-    .put(authorizationMiddleware.authorize, accountController.logOutAll)
-    .patch(authorizationMiddleware.authorize, accountController.logOutAll);
+Router.route("/logoutall")
+    .put(AuthorizationMiddleware.authorize, AccountController.logOutAll)
+    .patch(AuthorizationMiddleware.authorize, AccountController.logOutAll);
 
 
 //user profile route
-router.route('/user')
-    .post(authorizationMiddleware.authorize, userProfileController.createCurrentUser)
-    .put(authorizationMiddleware.authorize, userProfileController.updateCurrentUser)
-    .patch(authorizationMiddleware.authorize, userProfileController.updateCurrentUser)
-    .get(authorizationMiddleware.authorize, userProfileController.readCurrentUser);
+Router.route('/user')
+    .post(AuthorizationMiddleware.authorize, UserProfileController.createCurrentUser)
+    .put(AuthorizationMiddleware.authorize, UserProfileController.updateCurrentUser)
+    .patch(AuthorizationMiddleware.authorize, UserProfileController.updateCurrentUser)
+    .get(AuthorizationMiddleware.authorize, UserProfileController.readCurrentUser);
     
-module.exports = router;
+module.exports = Router;

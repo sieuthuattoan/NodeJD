@@ -1,16 +1,16 @@
-const jwt = require('jsonwebtoken');
+const Jwt = require('jsonwebtoken');
 const AccountModel = require('../models/accountModel');
-const responseObj = require('../config/responseMsgConfig');
+const ResponseObj = require('../config/responseMsgConfig');
 
 var authorize = async(req,res,next)=>{
     var token = req.header('Authorization').replace('Bearer ','');
-    var data = jwt.verify(token,process.env.JWT_KEY);
+    var data = Jwt.verify(token,process.env.JWT_KEY);
     try{
         var account = await AccountModel.findOne({_id: data._id, tokens: token});
         if(!account){
             res.json({
-                status: responseObj.STATUS.ERROR,
-                message: responseObj.MESSAGE.ACCESS_FAILED
+                status: ResponseObj.STATUS.ERROR,
+                message: ResponseObj.MESSAGE.ACCESS_FAILED
             })
         }else{
             req.LoggingInAccount = account;
@@ -20,7 +20,7 @@ var authorize = async(req,res,next)=>{
     }
     catch(err){
         res.json({
-            status: responseObj.STATUS.ERROR,
+            status: ResponseObj.STATUS.ERROR,
             message:err.message
         });
     }

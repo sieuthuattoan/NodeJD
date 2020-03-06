@@ -10,6 +10,7 @@ const resObj = {
         ACCESS_FAILED: "Access failed! Check authentication credentials",
         LOGIN_FAILED: "Login failed! Check authentication credentials",
         LOGIN_SUCCESS: "Login success!",
+        REGISTER_SUCCESS: "Register success!",
         INVALID_EMAIL: "Invalid email address",
         EMAIL_NOT_FOUND: "The email has not registered yet!!",
         LOGOUT_SUCCESS: "This account has been logged out",
@@ -20,6 +21,10 @@ const resObj = {
         USER_PROFILE_UPDATED: "User profile has been updated",
         USER_PROFILE_NOT_FOUND: "User profile not found! please create a new profile for this account",
         USER_PROFILE_CREATED: "User profile has been created",
+    },
+    PROCESS:{
+        ACTIVATE: "activate",
+        RECOVERY: "recovery"
     }
 }
 
