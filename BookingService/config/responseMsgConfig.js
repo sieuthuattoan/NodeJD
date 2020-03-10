@@ -12,6 +12,7 @@ const resObj = {
         BOOK_SUCCESS: "Login success!",
         ORDER_SUCCESS: "",
         ORDER_FAILED: "",
+        LIST_FAILED: ""
 
     },
     PROCESS:{
