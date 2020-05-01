@@ -8,6 +8,9 @@ var fetchData = async (req, res) => {
                 status: responseObj.STATUS.ERROR,
                 message: responseObj.MESSAGE.LIST_FAILED
             })
+        } else {
+
         }
     });
 }
+
