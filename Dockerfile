@@ -1,3 +1,3 @@
 FROM nginx:alpine
-COPY static /usr/share/nginx/html
+COPY . /usr/share/ideamachine
 LABEL maintainer = "sieuthuattoan@docker.com"
